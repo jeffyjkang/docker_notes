@@ -1,0 +1,6 @@
+-core:
+  new functionality -> commit changes to repo
+  commit changes to repo -> ci provider tests builds
+  ci provider tests builds -> deploy code
+  deploy code -> new functionality
+

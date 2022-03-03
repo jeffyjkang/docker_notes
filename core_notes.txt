@@ -1,0 +1,185 @@
+kernels:
+  runs directly on the hardware
+  respond to messages from the hardware
+  start and schedule programs
+  control and organize storage
+  pass messages between programs
+  allocates resources, memory, cpu, network, etc
+  create containers by Docker configuring the kernel
+
+docker:
+  program written in go
+  manage kernel features
+  uses 'cgroups' (control groups) to contain processes
+  uses 'namespaces' to contain networks
+  uses 'copy-on-write' filesystems to build images
+  makes scripting distributed systems 'easy'
+  divided into two programs, client and server
+  server:
+    receives commands over a socket (either over a network or through a 'file')
+  client:
+    can run inside docker itself
+  linix docker host {
+    docker client program <-> socket <-> docker server program
+    [docker container], [docker container]
+  }
+  or linux docker host {
+    docker server program <-> socket <-> docker container {
+      docker client program
+    }
+  }
+image:
+  executable package that includes everything needed to run an application
+  the code, a runtime, libraries, environment variables, and configuration files
+  a container is a runtime instance of an image
+
+containers:
+  designed to be ephemeral (disposable)
+  when containers are stopped, data is not accessible
+  containers are typically stored on each host
+  filesystem wasn't designed for high performance i/o
+
+networking:
+  ethernet: moves 'frames' on a wire (or wi-fi)
+  ip layer: moves packets on a local network
+  routing: forwards packets between networks
+  ports: address particular programs on a computer
+
+bridging:
+  docker uses bridges to create virtual networks in your computer
+  these are analygous to software switches
+  control the ethernet layer
+
+docker routing:
+  creates 'firewall' rules to move packets between networks
+  NAT (network address translation)
+  change the source address on the way out
+  change destination address on the way back in
+  -eg command to verify: sudo iptables -n -L -t nat
+  'exposing' a port is really 'port forwarding' at the networking level
+
+docker registry:
+  stateless, highly scalable application that stoes and lets you distribute Docker images
+  registries could be local (private) or cloud-based (private or public)  
+  docker registry (local open-source registry), docker trusted registry (dtr), docker hub
+
+namespaces:
+  they allow processes to be attached to private network segments
+  these private networks are bridged into a shared network with the rest of the containers
+  containers have virtual network 'cards'
+  containers get their own copy of the networking stack
+
+processes:
+  processes come from other processes parent-child relationship
+  when a child process exits, it returns an exit code to its parent
+  process zero is special; called init, the process that starts the rest
+  docker processes:
+    starts with an init process and vanishes when that process exits
+
+storage on linux:
+  actual storage devices:
+    hdd, thumb, network storage, kernel manages
+  logical storage devices:
+    logical groups, partitioning
+  filesystems:
+    which bits on drive are part of which file
+  FUSE filesystems and network filesystems:
+    programs
+
+storage on docker:
+  COWs (copy on write):
+    base image, layers on top of base image
+  contents of layers are moved between containers in gzip files
+  containers are independent of the storage engine
+  any container can be loaded (almost) anywhere
+  it is possilbe to run out of layers on some of the storage engines
+volumes (shared folders) and Bind mounting:
+  if write heavy, suggested to use volumes
+  built into the linux vfs (virtual file system)
+  mounting devices on the vfs
+  mounting directories on the vfs
+  can have multiple containers share same persisted data via volumes
+  * get mount order correct
+  always mounts host's filesystem over the guest
+  recommended way to persist data
+  default stored at /var/lib/docker/volumes/
+  bind mount:
+    have limited functionality and you must use the exact file path on the host
+  tmpfs mount:
+    stored only in host's memory in linux (least recommened option)
+  storage drivers:
+    overlay2, overlay, devicemapper
+    if storage drivers are changed will be unable to access images and containers
+      
+block storage vs object storage:
+  block:
+    fixed chunks of data
+    no metadata is stored
+    best for i/o intensive apps
+    SAN storage uses block storage protocols like iSCSI
+  object:
+    data is stored with metadata and a unique identifier
+    there is no organization to the objects
+    scalability is limitless
+    acessed with http calls
+    eg- aws s3
+
+registry:
+  program
+  stores layers and images
+  listens on (usually) port 5000
+  maintains an index and searches tags
+  authorizes and authenticates connections (sometimes)
+  network service
+  registry programs:
+    official python docker registry
+    nexus
+
+orchestration systems:
+  start containers / restart them if they fail
+  service discovery / allows them to find each other
+  resource allocation / match containers to computers
+  break large applications into microservices
+  consistent performance as you scale applications
+  high availability for those applications when the unexpected occurs
+
+docker compose:
+  single machine coordination
+  designed for testing and development
+  brings up all your containers, volumes, networks, etc. w/ one command
+
+swarm:
+  tool installed and enabled by default
+  allows to manage clusters of nodes
+  virtual or physical machines are nodes
+  features such as load balancing
+  high availability
+  load balancing
+  resiliency
+  placement
+  declarative service model
+service:
+  cluster management command
+  must be executed on a swarm manager node
+
+kubernetes:
+  containers run programs
+  pods group containers together
+  services make pods available to others
+  labels are used for very advanced service discovery
+  makes scripting large operations possible with the kubectl command
+  very flexible overlay networking
+  runs equally well on hardware or cloud provider
+  built-in service discovery
+
+ec2 container service (ecs):
+  task definitions, define a set of containers that always run together
+  tasks actually makes a container run right now
+  services and exposes it to the net, ensures that a task is running all the time
+  connects load balancers (elbs) to services
+  can create your own host instances in AWS
+  make your instances start the agent and join the cluster
+  pass the docker control socket into the agent
+  provides docker repos and it's easy to run your own repo
+  containers (tasks) can be part of CloudFormation stacks
+

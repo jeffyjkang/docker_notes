@@ -1,0 +1,7 @@
+include installers in your project
+have a cononical build that builds everything completely from scratch
+tag your builds with the git hash of the code that built it
+use small base images, such as alpine
+build images you share publicly from Dockerfiles
+don't leave passwords in layers; delete files in the same step
+

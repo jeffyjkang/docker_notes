@@ -1,0 +1,54 @@
+kernel namespaces:
+  created when a container is run
+  container processes cannot see or affect other processes
+  each container has its own network stack
+control groups:
+  created when a container is run
+  provide resource accounting and limiting
+  ensure no containers exhaust host resources
+docker daemon attack surface:
+  small, but take appropriate security measures
+  only run docker on a host
+  only let trusted users control the Docker daemon, ran with root priveleges
+linux kernel capabilities:
+  docker runs containers with restricted capabilities
+  even os containers don't get full root priveleges
+
+docker swarm cluster
+mutually authenticated tls (mtls):
+  manually rotating certificates is painful
+  rotating security certificates without downtime is even harder
+  mtls is built into docker swarm and solves these challenges
+managers:
+  maintain cluster state
+  schedule services
+  serve as swarm http api endpoints
+workers:
+  sole purpose is to execute container workloads
+
+docker content trust:
+  important to know that the image you wanted is the image you received
+  especially when pulling images from internet sites or large orgs
+  docker notary is an open-source project that provides the ability to
+  digitally sign content and is also included with dtr
+  enforces a policy that any operations with a remote registry require signed images
+  cmd: export DOCKER_CONTENT_TRUST=1
+  once enabled, the docker push will try to sign an image
+  once enabled, docker pull will only download signed images
+  with UCP, you can ensure that only signed images can be run
+
+identifying roles in ucp
+docker access control model:
+  subjects:
+    user, team, organization, service account
+  roles:
+    subjects are granted roles
+    defines what can be done:
+      view only, restricted control, full control
+  resources:
+    swarm collections, kubernetes namespaces
+    collections and namespaces together are called resource sets
+  grants:
+    combination of a subject, role, and resource set
+    grants are the access control list; "ACL" of docker UCP
+

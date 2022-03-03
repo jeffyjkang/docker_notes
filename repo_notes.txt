@@ -1,0 +1,6 @@
+docker login
+docker pull alpine
+docker tag <imageId> username/imageName:<tag>
+docker push username/<repoName>
+docker rmi <imageId> -f
+

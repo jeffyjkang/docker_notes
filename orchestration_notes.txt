@@ -1,0 +1,68 @@
+containers [app, app, app]
+    ^  ^  ^
+    ucp
+      manages users, teams, role based control
+    ^  ^  ^
+swarm [worker node, worker node, worker node]
+
+new manager node to a swarm cluster
+  swarm join command with the manager token
+
+backing up docker ee:
+  docker swarm cluster 
+    systemctl stop docker \
+    cd /var/lib/docker \
+    copy and archive the swarm directory \
+    systemctl start docker
+  universal control plane (UCP)
+    docker container run \
+    --log-driver none --rm \
+    --interactive \
+    --name ucp \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    docker/ucp:2.2.6 backup \
+    --id <ucp-instance-id> \
+    --passphrase "secret" > /tmp/backup.tar
+  docker trusted registry (DTR)
+    registry content data
+      sudo tar -cf backup-images.tar \ $(dirname $(docker volume
+      inspect --format '{{.Mountpoint}}' dtr-registry-<replica-id>))
+    dtr metadata
+      read -sp 'ucp password: ' UCP_PASSWORD; \
+      docker run --log-driver none -i --rm \
+      --env UCP_PASSOWRD=$UCP_PASSWORD \
+      docker/dtr:2.3.11 backup \
+      --ucp-url <ucp-url> \
+        --ucp-insecure-tls \
+        --ucp-username <ucp-username> \
+        --existing-replica-id <replica-id> > backup-metadata.tar
+  container volume data
+    should not be inside your containers
+    best practices are to keep it in a container volume
+    container vols could be stored locally on Docker nodes on a share that
+    goes to a NAS or SAN or even in the public cloud
+
+docker trusted registry (DTR)
+  docker run -it --rm docker/dtr:2.4.12<version> install --ucp-insecure-tls
+
+node:
+  physical host or vm that is running the docker engine
+swarm cluster:
+  nodes in cluster
+tasks:
+  i.e nginx on tasks
+container:
+  runs on one host
+  must share networks and storage per container, when run
+  tough to scale and make highly available
+service:
+  service across nodes in the cluster
+  automatically runs across however many nodes are needed
+  high availability is built in
+  scalability of the app is easy
+  exposing networks and storage is easy
+stack file:
+  used to define a complete, multi-tiered, highly available, highly scalable application to a swarm cluster
+  text file created in YAML format
+  portable from desktop to swarm cluster
+  

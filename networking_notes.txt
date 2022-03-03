@@ -1,0 +1,43 @@
+use cases for docker networking
+  native network drivers:
+    bridge:
+      connects container to the lan and other containers
+      default network type
+      most use cases
+    host:
+      remove netowrk isolation between container and host
+      only one container (or app on the host) can use a port at the same time
+      useful for specific applications, such as a management container that you want to run on every host
+    overlay:
+      connect multiple docker hosts (and their containers) together and enable swarm
+      * only available with Docker EE and Swarm enabled
+      multihost networking using VXLAN
+    macvlan:
+      assign a MAC address, appear as physical host
+      clones host interfaces to create virtual interfaces, available in the container
+      supports connecting to VLANs
+    none:
+      connects the container to an isolated network with only that container on it
+      container cannot communicate with any other networks or networked devices
+  third-party network plugins:
+    infobox IPAM plugin, weave net, contiv network plugin
+
+publishing ports
+  docker host {
+    container: container port# -> exposed port # -> bridge network =>
+  } => physical NIC -> internal lan or public internet
+  map public to private
+  by default containers have outbound network access but no inbound network access
+  ports must be published to allow inbound network access
+  host port publishing:
+    typically used with a global mode service
+    used to publish a single port on each host
+    when publishing ports, specify mode=host
+  ingress port publishing:
+    used with replicated mode services
+    used to publish a single port acrosss all hosts that goes to a pool of containers
+
+load balancing in Docker ee:
+  docker swarm provided load balancing of workloads as they are instantiated
+  swarm hasn't traditionally scaled up or down containers, based on demand
+  

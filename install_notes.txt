@@ -1,0 +1,54 @@
+docker linux manjaro or arch-based:
+-- update package manager and install docker
+pacman -Syu / -Syyu (forced db update)
+pacman -S docker
+
+-- check status
+systemctl status docker
+systemctl start docker
+systemctl stop docker
+
+-- enable from book
+systemctl enable docker
+systemctl disable docker
+
+-- create docker group and add your user
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
+docker for linux using apt:
+  sudo apt-get remove docker docker-engine docker-ce docker.io:
+    for fresh install remove potential previous versions
+  sudo apt-get update:
+    latest packages
+  sudo apt-get install \ apt-transport-https \ ca-certificates \ curl \ software-properties-common:
+    allows install over https
+  curl -fsSL <docker url linux version> gpg | sudo apt-key add -:
+    package tool recognize docker website
+  sudo apt-key fingerprint <key>:
+    verify that you have the docker gpg key
+  sudo add-apt-repository \ <repo>:
+    add repository to apt package tool
+  sudo apt-get update:
+    update again for latest
+  sudo apt-get install <docker?specific version>:
+
+docker for mac:
+  install docker for mac
+  docker info:
+  docker run hello-world
+
+docker for windows:
+  install docker for windows
+  docker version
+  can toggle between linux/ windows containers
+  docker windows server:
+    install docker provided and docker package
+
+docker universal control plane (UCP):
+  centralized management tool for docker ee
+  deployed in container from docker
+
+docker compose for arch-based:
+  sudo pacman -S docker-compose
+

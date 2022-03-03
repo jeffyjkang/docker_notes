@@ -1,0 +1,84 @@
+FROM:
+  eg- FROM debian:sid
+  which image to (download) and start from
+  must be the forst command in your dockerfile
+  defines the base image; the FROM instruction must be the first instruction in the Dockerfile
+
+MAINTAINER:
+  eg- MAINTAINER firstname lastname <email@example.com>
+  defines the author of this dockerfile
+  while deprecated, MAINTAINER is used to document the author of the Dockerfile
+  (typically an email address)
+
+RUN:
+  eg- RUN unzip install.zip /opt/install/
+  runs the command line, waits for it to finish, and saves the result
+  runs a new command in a new layer
+
+ADD:
+  eg- ADD run.sh /run.sh
+  adds local file
+  eg- ADD project.tar.gz /install/
+  uncompresses and adds all files into the directory
+  eg- ADD <url> /project/
+  add downloaded contents in url to directory
+  copies a file into the image but supports tar and remote URL
+
+COPY:
+  copy files into the image, preferred over ADD
+
+ENV:
+  -eg ENV DB_HOST=db.production.example.com
+  sets env vars, both during the build and when running the result
+  used to define env variables in the container
+
+ENTRYPOINT and CMD:
+  cmd statement specifies which command to run within the container
+  entrypoint statement is for making your containers look like normal programs
+  entrypoint specifies the start of the command to run
+  cmd specifies the whole command to run
+  if you have both, they are combined together
+  general rule: if you want container to act like a command line program
+    use entrypoint, otherwise use cmd
+  shell form:
+    eg- nano notes.txt
+  exec form:
+    eg- ["/bin/nano", "notes.txt"]
+    slightly more effecient since it does not run surrounded by shell like bash
+  ENTRYPOINT:
+    executable runs when a container is run
+  CMD:
+    provides argument for the entrypoint (only one is allowed)
+
+EXPOSE:
+  eg- EXPOSE 8080
+  expose ports to a container
+  documents the ports that should be published
+
+VOLUME:
+  defines shared or ephemeral volumes
+  eg- VOLUME ["/host/path/", "/container/path/"]
+    maps host path to container path
+  eg- VOLUME ["/shared-data"]
+    can be inherited by later containers
+    in general avoid defining shared folders, will only share on current host
+  creates a mount point as defined when the container is run
+
+WORKDIR:
+  eg- WORKDIR /install/
+  sets the directory the container starts in
+  defines the working directory of the container
+
+USER:
+  eg- USER <userName/userNumber>
+  sets which user the container will run as
+
+ONBUILD:
+  only used as a trigger when this image is used to build other images;
+  will define commands to run "on build"
+
+** each line of a dockerfil makes a new,
+  independent image based on the previous line's image
+** golden image replaces a canonical build with a locally-modified revision,
+  don't do golden images
+

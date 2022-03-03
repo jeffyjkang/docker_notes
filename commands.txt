@@ -1,0 +1,141 @@
+docker images:
+  look at list of images
+docker ?container port <containerName>:
+  list container port: host port
+docker build <options> <path>:
+  builds docker images from a dockerfile and a context
+  --squash:
+    experimental, merge images together
+docker ps:
+  process status, shows all processes actively running
+  -a:
+    both stopped and running
+  -l:
+    last ran container
+docker image history <imageId>:
+  history of image layers
+docker image prune ?-a:
+  removes all dangling images (without tag) /
+  without at least one container associated to them  
+docker run <image:latest> ?<command // bash>:
+  run container, stops when process stops
+  -ti:
+    terminal interactive
+  --rm:
+    clean up container and remove the file system after the container exits
+  -c <//"sleep 3; echo all done">:
+    run commands afterwards
+  -d:
+    detach, run in background, returns identifier
+    <ctrl+p, ctrl+q>:
+      when inside the container, detach and keep running
+  --memory maximum-allowed-memory:
+  --cpu-shares: // relative to other containers
+  --cpu-quota: // limit in general
+  -p <port // inside:?port // outside> ?udp/tcp:
+    eg - 80:8080, bind port 8080 of container to 80 on host machine
+  -e <arg>:
+    environment variable
+  --link <arg>:
+    legacy private network, some features may be usefull, unidirectional
+  -v <path>:
+    volume sharing, directory or file
+  --network host <name>:
+    runs on host network, no config
+docker attach <containerName>:
+  jump into container
+docker exec <containerName> <process // bash>: 
+  execute new process in container
+docker commit <containerId>:
+  create an image, returns imageId, sha256
+docker commit <containerName> <imageName>:
+  create an image, returns imageId, but with the tag attached as imageName
+  // better way to do
+docker tag <imageId> <imageName>:
+  creates a tag for imageId
+docker logs <containerName>:
+  log for info
+docker stop <containerId>:
+  stops container (SIGTERM signal)
+docker kill <containerName>:
+  stops container (SIGKILL signal)
+docker rm <contianerName>:
+  remove container file system
+docker rmi <imageName>:
+  remove image file system
+docker network:
+  ls:
+    list network
+  inspect <networkName>:
+    detail info about network
+  create --driver <option: bridge> <name:app-net>:
+    create custome defined network
+docker network create <name>:
+docker run --net <name> --name <containerName>:
+docker pull <imageName>:
+  pull from regristry
+docker push <imageName>:
+  push to registry
+docker inspect:
+  finds any piece of info about a program programatically
+docker save:
+docker load:
+docker version:
+  what version of client and server,
+  errors can be an indication of bad communication
+docker info:
+  containers running, stopped, storage driver, log driver, swarm, etc
+docker node ls:
+  only on manager node,
+  status of docker swarm cluster
+docker inspect <options>:
+  can inspect services, containers, etc
+docker search <options> <TERM>:
+  search hub for images that match the specified term
+docker tag <sourceImg> <targetImg>:
+
+* host.docker.internal : special name for host machine (when inside container)
+
+volumes: virtual discs to store and share data
+  persistent/ ephemeral
+  not part of images
+
+** docker files
+docker build -t <name> .:
+  tag / <name> / location in which you can find the docker file (path to docker file)
+
+docker-compose:
+  docker-compose up:
+    will run top down,
+    if you need to specify order in which to run -
+    docker-compose up -d <service (mongo)>
+    docker-compose up -d <service (app)>
+  docker-compose stop:
+    stops all of the containers running
+
+docker swarm init:
+  initialize docker swarm
+  docker swarm join-token <worker|manager>
+  docker swarm join --token <> <ip>
+  docker swarm init --autolock
+  docker swarm update --autolock=true
+  docker swarm unlock-key:
+    only available when unlocked
+  docker swarm ca --rotate:
+    generate a new CA certificate and key
+docker node ls:
+  node list
+docker stack deploy -c docker-compose.yml <name>
+docker service create --replicas 1 --name
+--advertise-addr:
+  flag to advertise address to other nodes
+  because manager nodes are meant to be stable
+  use fixed ip address for the advertise address to prevent swarm from becoming unstable on machine reboot
+
+docker service create --name <name> --replicas=<number> <image|service>:
+
+docker volume:
+  ls, inspect, prune, rm, create
+docker container run -d --mount type=bind,source=<path>,target=<path> name:
+  bind mount example
+

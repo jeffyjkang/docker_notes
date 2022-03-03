@@ -1,0 +1,45 @@
+docker editions:
+  community:
+    container engine w/ orchestraion, networking and security
+  enterprise:
+    certified infrastructure, plugins, and isv containers
+    image management
+    container app management
+    secure image scanning
+
+universal control plane (ucp) sizing:
+  min:
+    8 gb ram for manager nodes or nodes running  docker trusted registry (dtr)
+    4 gb ram for worker nodes
+    3 gb free disk space
+  production:
+    16 gb ram for manager nodes or nodes running dtr
+    4 vCPUs for manager nodes or nodes running dtr
+    25-100 gb of free disk space
+
+docker engine:
+  rest api -> server(docker daemon, dockerd) <- client(docker cli)
+
+storage driver:
+  controls how images and containers are stored on docker host
+
+-logging
+  /etc/docker
+  touch daemon.json:
+    configure overrides for default daemon process
+docker logs <containerId>:
+  log file
+docker run --log-driver-syslog --log-opt syslog-address=udp://1.1.1.1 alpine:
+  customize log driver
+
+storage driver configuration:
+  sudo systemctl stop docker
+  sudo cp -au /var/lib/docker $HOME:
+    backup docker dir
+  <vim | nano> /etc/docker/daemon.json:
+    edit storage driver config
+    eg- "storage-driver":"overlay"
+  sudo systemctl start docker
+  docker info:
+    check daemon to verify storage driver is overlay | devicemapper | etc
+ 
